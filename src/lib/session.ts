@@ -1,0 +1,34 @@
+const KEY = "elena_session_id";
+
+export function getSessionId(): string {
+  let id = localStorage.getItem(KEY);
+  if (!id) {
+    id = "web-" + Date.now().toString(36) + "-" + Math.random().toString(36).slice(2, 8);
+    localStorage.setItem(KEY, id);
+  }
+  return id;
+}
+
+export type Product = {
+  nombre: string;
+  precio: number | null;
+  link: string;
+  imagen: string;
+  disponibilidad: string;
+};
+
+export type ChatMsg = { role: "user" | "bot"; text: string; products?: Product[] };
+
+const HIST = "elena_history";
+
+export function loadHistory(): ChatMsg[] {
+  try { return JSON.parse(sessionStorage.getItem(HIST) || "[]"); } catch { return []; }
+}
+
+export function saveHistory(msgs: ChatMsg[]) {
+  sessionStorage.setItem(HIST, JSON.stringify(msgs.slice(-30)));
+}
+
+export function chatSummary(msgs: ChatMsg[]): string {
+  return msgs.slice(-6).map(m => (m.role === "user" ? "Cliente: " : "Elena: ") + m.text).join("\n").slice(0, 800);
+}
