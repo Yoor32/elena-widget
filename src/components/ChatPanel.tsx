@@ -4,6 +4,7 @@ import { ChatMsg, Product, getSessionId, loadHistory, saveHistory } from "../lib
 import { base64Bytes, compressImage, inferTipo, isAllowedImage, MAX_UPLOAD_BYTES, uploadMedia } from "../lib/upload";
 import { PrecotState, PRECOT_EMPTY, detectPrecot } from "../lib/precot";
 import { PrecotStepper } from "./PrecotStepper";
+import { contextualGreeting } from "../lib/context";
 
 function formatPrice(p: number | null): string {
   if (p == null) return "Cotizable";
@@ -86,6 +87,11 @@ export function ChatPanel() {
   const [stepper, setStepper] = useState<PrecotState>(PRECOT_EMPTY);
   const endRef = useRef<HTMLDivElement>(null);
   const fileRef = useRef<HTMLInputElement>(null);
+  // Saludo adaptado a la categoría de la página del sitio (se calcula una vez).
+  const [greeting] = useState(
+    () => contextualGreeting(CONFIG.brand.assistant) ||
+      `¡Hola! Soy ${CONFIG.brand.assistant}, de ${CONFIG.brand.name}. ¿En qué le puedo ayudar?`
+  );
 
   // Último mensaje de Elena: detecta si conviene ofrecer el stepper guiado.
   const lastBot = [...msgs].reverse().find(m => m.role === "bot");
@@ -169,9 +175,7 @@ export function ChatPanel() {
     <div className="lw-chat">
       <div className="lw-msgs">
         {msgs.length === 0 && (
-          <div className="lw-msg lw-bot">
-            ¡Hola! Soy {CONFIG.brand.assistant}, de {CONFIG.brand.name}. ¿En qué le puedo ayudar?
-          </div>
+          <div className="lw-msg lw-bot">{greeting}</div>
         )}
         {msgs.map((m, i) => (
           <div key={i}>
