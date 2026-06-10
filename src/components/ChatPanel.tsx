@@ -11,32 +11,64 @@ function formatPrice(p: number | null): string {
   }
 }
 
-function ProductCards({ products }: { products: Product[] }) {
+function isPreDiseno(p: Product): boolean {
+  return p.disponibilidad === "Pre-diseño AI" || (p.precio == null && /pre-?dise/i.test(p.disponibilidad || ""));
+}
+
+function PreDisenoCard({ p, onSend }: { p: Product; onSend: (text: string) => void }) {
+  return (
+    <div className="lw-card lw-card-ai">
+      {p.imagen ? (
+        <div className="lw-card-ai-img" style={{ backgroundImage: `url("${p.imagen}")` }} />
+      ) : (
+        <div className="lw-card-ai-img lw-card-noimg">Pre-diseño AI</div>
+      )}
+      <div className="lw-card-body">
+        <span className="lw-card-badge-ai">✨ Pre-diseño AI</span>
+        <div className="lw-card-name">{p.nombre}</div>
+        <div className="lw-card-ai-actions">
+          <button className="lw-card-btn" onClick={() => onSend("Quiero pre-cotizar este diseño")}>
+            Cotizar este diseño
+          </button>
+          <button className="lw-card-btn lw-card-btn-ghost" onClick={() => onSend("Genera otra versión del diseño")}>
+            Otra versión
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function ProductCards({ products, onSend }: { products: Product[]; onSend: (text: string) => void }) {
   const list = products.filter(p => p && p.nombre);
   if (list.length === 0) return null;
   return (
     <div className="lw-cards">
-      {list.map((p, i) => (
-        <div className="lw-card" key={i}>
-          {p.imagen ? (
-            <div className="lw-card-img" style={{ backgroundImage: `url("${p.imagen}")` }} />
-          ) : (
-            <div className="lw-card-img lw-card-noimg">Mueblería Misantla</div>
-          )}
-          <div className="lw-card-body">
-            <div className="lw-card-name">{p.nombre}</div>
-            <div className="lw-card-meta">
-              <span className="lw-card-price">{formatPrice(p.precio)}</span>
-              {p.disponibilidad && <span className="lw-card-stock">{p.disponibilidad}</span>}
-            </div>
-            {p.link && (
-              <a className="lw-card-btn" href={p.link} target="_blank" rel="noopener noreferrer">
-                Ver producto
-              </a>
+      {list.map((p, i) =>
+        isPreDiseno(p) ? (
+          <PreDisenoCard key={i} p={p} onSend={onSend} />
+        ) : (
+          <div className="lw-card" key={i}>
+            {p.imagen ? (
+              <div className="lw-card-img" style={{ backgroundImage: `url("${p.imagen}")` }} />
+            ) : (
+              <div className="lw-card-img lw-card-noimg">Mueblería Misantla</div>
             )}
+            <div className="lw-card-body">
+              <div className="lw-card-name">{p.nombre}</div>
+              <div className="lw-card-meta">
+                <span className="lw-card-price">{formatPrice(p.precio)}</span>
+                {p.disponibilidad && <span className="lw-card-stock">{p.disponibilidad}</span>}
+              </div>
+              {p.link && (
+                <a className="lw-card-btn" href={p.link} target="_blank" rel="noopener noreferrer">
+                  Ver producto
+                </a>
+              )}
+            </div>
           </div>
-        </div>
-      ))}
+        )
+      )}
     </div>
   );
 }
@@ -82,7 +114,7 @@ export function ChatPanel() {
         {msgs.map((m, i) => (
           <div key={i}>
             <div className={`lw-msg ${m.role === "user" ? "lw-user" : "lw-bot"}`}>{m.text}</div>
-            {m.role === "bot" && m.products && m.products.length > 0 && <ProductCards products={m.products} />}
+            {m.role === "bot" && m.products && m.products.length > 0 && <ProductCards products={m.products} onSend={send} />}
           </div>
         ))}
         {busy && <div className="lw-msg lw-bot lw-typing">Escribiendo…</div>}
