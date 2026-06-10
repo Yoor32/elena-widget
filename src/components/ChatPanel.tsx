@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { CONFIG } from "../config";
-import { ChatMsg, Product, getSessionId, loadHistory, saveHistory } from "../lib/session";
+import { ChatMsg, Product, getSessionId, loadHistory, saveHistory, loadStepperUI, saveStepperUI, loadScroll, saveScroll } from "../lib/session";
 import { base64Bytes, compressImage, inferTipo, isAllowedImage, MAX_UPLOAD_BYTES, uploadMedia } from "../lib/upload";
 import { PrecotState, PRECOT_EMPTY, detectPrecot } from "../lib/precot";
 import { PrecotStepper } from "./PrecotStepper";
@@ -83,10 +83,14 @@ export function ChatPanel() {
   const [busy, setBusy] = useState(false);
   const [uploading, setUploading] = useState(false);
   const [uploadError, setUploadError] = useState<string | null>(null);
-  const [stepperOpen, setStepperOpen] = useState(false);
-  const [stepper, setStepper] = useState<PrecotState>(PRECOT_EMPTY);
+  // Restaura el stepper guardado al minimizar/reabrir (se lee una sola vez al montar).
+  const [bootStepper] = useState(() => loadStepperUI<PrecotState>());
+  const [stepperOpen, setStepperOpen] = useState(bootStepper?.open ?? false);
+  const [stepper, setStepper] = useState<PrecotState>(bootStepper?.state ?? PRECOT_EMPTY);
   const endRef = useRef<HTMLDivElement>(null);
+  const msgsRef = useRef<HTMLDivElement>(null);
   const fileRef = useRef<HTMLInputElement>(null);
+  const prevLen = useRef(loadHistory().length);
   // Saludo adaptado a la categoría de la página del sitio (se calcula una vez).
   const [greeting] = useState(
     () => contextualGreeting(CONFIG.brand.assistant) ||
@@ -108,7 +112,23 @@ export function ChatPanel() {
     send(message);
   }
 
-  useEffect(() => { endRef.current?.scrollIntoView({ behavior: "smooth" }); saveHistory(msgs); }, [msgs]);
+  // Persiste historial; baja al final SOLO cuando llega un mensaje nuevo (no al restaurar).
+  useEffect(() => {
+    saveHistory(msgs);
+    if (msgs.length > prevLen.current) endRef.current?.scrollIntoView({ behavior: "smooth" });
+    prevLen.current = msgs.length;
+  }, [msgs]);
+
+  // Al montar (abrir/reabrir): restaura el scroll guardado o baja al final.
+  useEffect(() => {
+    const el = msgsRef.current;
+    const saved = loadScroll();
+    if (el && saved != null) el.scrollTop = saved;
+    else endRef.current?.scrollIntoView();
+  }, []);
+
+  // Persiste el estado del stepper al cambiar.
+  useEffect(() => { saveStepperUI(stepperOpen, stepper); }, [stepperOpen, stepper]);
 
   // `payload` permite enviar al backend un mensaje distinto al que ve el cliente
   // (p. ej. fotos: el ticket recibe la URL privada, la burbuja no la muestra).
@@ -173,7 +193,7 @@ export function ChatPanel() {
 
   return (
     <div className="lw-chat">
-      <div className="lw-msgs">
+      <div className="lw-msgs" ref={msgsRef} onScroll={e => saveScroll(e.currentTarget.scrollTop)}>
         {msgs.length === 0 && (
           <div className="lw-msg lw-bot">{greeting}</div>
         )}
