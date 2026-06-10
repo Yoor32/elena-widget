@@ -17,6 +17,23 @@
 .lw-quick { display: flex; gap: 6px; flex-wrap: wrap; padding: 8px 12px; background: #faf7f2; }
 .lw-quick button { border: 1px solid #d9c4ab; background: #fff; color: #7a4a21; border-radius: 999px; padding: 6px 10px; font-size: 12px; cursor: pointer; }
 .lw-upload-error { color: #b03a2e; font-size: 12px; padding: 6px 14px 0; background: #fff; }
+.lw-precot-offer { padding: 8px 12px 0; background: #faf7f2; }
+.lw-precot-offer button { border: 1px solid #d9c4ab; background: #fff; color: #7a4a21; border-radius: 999px; padding: 8px 14px; font-size: 13px; font-weight: 600; cursor: pointer; width: 100%; }
+.lw-precot-offer button:hover:not(:disabled) { background: #f3e6d3; }
+.lw-stepper { background: #fff; border-top: 1px solid #eee2d4; border-bottom: 1px solid #eee2d4; padding: 10px 12px; display: flex; flex-direction: column; gap: 10px; }
+.lw-step-head { display: flex; justify-content: space-between; align-items: center; color: #7a4a21; font-size: 13px; }
+.lw-step-close { background: transparent; border: none; color: #7a4a21; font-size: 14px; cursor: pointer; }
+.lw-step-summary { display: flex; flex-wrap: wrap; gap: 6px; }
+.lw-step-summary:empty { display: none; }
+.lw-step-chosen { border: 1px solid #7a4a21; background: #f3e6d3; color: #7a4a21; border-radius: 999px; padding: 3px 10px; font-size: 12px; font-weight: 600; cursor: pointer; }
+.lw-step-row { display: flex; flex-direction: column; gap: 6px; }
+.lw-step-q { font-size: 12px; color: #4a3a30; font-weight: 600; }
+.lw-step-chips { display: flex; flex-wrap: wrap; gap: 6px; }
+.lw-step-chips button { border: 1px solid #d9c4ab; background: #fff; color: #7a4a21; border-radius: 999px; padding: 6px 12px; font-size: 12px; cursor: pointer; text-transform: capitalize; }
+.lw-step-chips button:hover:not(:disabled) { background: #f3e6d3; }
+.lw-step-num { border: 1px solid #ddd; border-radius: 10px; padding: 8px 12px; font-size: 14px; outline: none; max-width: 140px; }
+.lw-step-calc { border: none; background: #1d9e75; color: #fff; border-radius: 999px; padding: 9px 16px; font-size: 14px; font-weight: 600; cursor: pointer; align-self: flex-start; }
+.lw-step-calc:hover:not(:disabled) { background: #178a64; }
 .lw-input { display: flex; gap: 8px; padding: 10px 12px; border-top: 1px solid #eee; background: #fff; align-items: center; }
 .lw-attach-btn { border: 1px solid #ddd; background: #fff; border-radius: 50%; width: 38px; min-width: 38px; height: 38px; font-size: 17px; cursor: pointer; padding: 0; line-height: 1; }
 .lw-attach-btn:hover:not(:disabled) { background: #f3e6d3; }

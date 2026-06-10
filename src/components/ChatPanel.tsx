@@ -2,6 +2,8 @@ import { useEffect, useRef, useState } from "react";
 import { CONFIG } from "../config";
 import { ChatMsg, Product, getSessionId, loadHistory, saveHistory } from "../lib/session";
 import { base64Bytes, compressImage, inferTipo, isAllowedImage, MAX_UPLOAD_BYTES, uploadMedia } from "../lib/upload";
+import { PrecotState, PRECOT_EMPTY, detectPrecot } from "../lib/precot";
+import { PrecotStepper } from "./PrecotStepper";
 
 function formatPrice(p: number | null): string {
   if (p == null) return "Cotizable";
@@ -80,8 +82,25 @@ export function ChatPanel() {
   const [busy, setBusy] = useState(false);
   const [uploading, setUploading] = useState(false);
   const [uploadError, setUploadError] = useState<string | null>(null);
+  const [stepperOpen, setStepperOpen] = useState(false);
+  const [stepper, setStepper] = useState<PrecotState>(PRECOT_EMPTY);
   const endRef = useRef<HTMLDivElement>(null);
   const fileRef = useRef<HTMLInputElement>(null);
+
+  // Último mensaje de Elena: detecta si conviene ofrecer el stepper guiado.
+  const lastBot = [...msgs].reverse().find(m => m.role === "bot");
+  const precotTipo = lastBot ? detectPrecot(lastBot.text) : null;
+
+  function openStepper() {
+    setStepper(precotTipo ? { ...PRECOT_EMPTY, tipo: precotTipo } : PRECOT_EMPTY);
+    setStepperOpen(true);
+  }
+
+  function submitStepper(message: string) {
+    setStepperOpen(false);
+    setStepper(PRECOT_EMPTY);
+    send(message);
+  }
 
   useEffect(() => { endRef.current?.scrollIntoView({ behavior: "smooth" }); saveHistory(msgs); }, [msgs]);
 
@@ -165,6 +184,23 @@ export function ChatPanel() {
         <div ref={endRef} />
       </div>
       {uploadError && <div className="lw-upload-error">{uploadError}</div>}
+      {stepperOpen ? (
+        <PrecotStepper
+          state={stepper}
+          setState={setStepper}
+          onSubmit={submitStepper}
+          onCancel={() => { setStepperOpen(false); setStepper(PRECOT_EMPTY); }}
+          disabled={busy}
+        />
+      ) : (
+        precotTipo && (
+          <div className="lw-precot-offer">
+            <button type="button" onClick={openStepper} disabled={busy}>
+              ✨ Armar pre-cotización de {precotTipo}
+            </button>
+          </div>
+        )
+      )}
       <div className="lw-quick">
         {CONFIG.quickReplies.map(q => (
           <button key={q} onClick={() => send(q)} disabled={busy}>{q}</button>
