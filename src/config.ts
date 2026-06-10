@@ -1,6 +1,7 @@
 export const CONFIG = {
   agentId: "agent_4101ktatk4azetysvfp55qxs05f4",
   chatWebhook: "https://yoor32.app.n8n.cloud/webhook/chat",
+  uploadWebhook: "https://yoor32.app.n8n.cloud/webhook/upload-media",
   brand: {
     name: "Mueblería Misantla",
     assistant: "Elena",
