@@ -64,11 +64,19 @@ function ProductCards({ products, onSend }: { products: Product[]; onSend: (text
                 <span className="lw-card-price">{formatPrice(p.precio)}</span>
                 {p.disponibilidad && <span className="lw-card-stock">{p.disponibilidad}</span>}
               </div>
-              {p.link && (
-                <a className="lw-card-btn" href={p.link} target="_blank" rel="noopener noreferrer">
-                  Ver producto
-                </a>
-              )}
+              <div className="lw-card-actions">
+                {p.link && (
+                  <a className="lw-card-btn" href={p.link} target="_blank" rel="noopener noreferrer">
+                    Ver producto
+                  </a>
+                )}
+                <button
+                  className="lw-card-btn lw-card-btn-ghost"
+                  onClick={() => onSend(`Quiero agendar cita para ver ${p.nombre}`)}
+                >
+                  Agendar cita para verlo
+                </button>
+              </div>
             </div>
           </div>
         )
