@@ -13,7 +13,7 @@ export type PrecotState = {
 export const PRECOT_EMPTY: PrecotState = { tipo: null, medida: "", madera: null, acabado: null };
 
 export const MADERAS = ["Cedro", "Caoba"]; // mismo precio
-export const ACABADOS = ["Poliuretano", "Laca", "Barniz", "Natural"];
+export const ACABADOS = ["Poliuretano", "Aceite de linaza", "Cera"];
 
 const TIPO_PATTERNS: { tipo: PrecotTipo; re: RegExp }[] = [
   { tipo: "puerta de tambor", re: /puertas?\s+de\s+tambor/i },
