@@ -33,30 +33,6 @@ export function chatSummary(msgs: ChatMsg[]): string {
   return msgs.slice(-6).map(m => (m.role === "user" ? "Cliente: " : "Elena: ") + m.text).join("\n").slice(0, 800);
 }
 
-// --- Persistencia de UI al minimizar/reabrir (el panel se desmonta al cerrar) ---
-
-const STEPPER = "elena_stepper";
-
-export function loadStepperUI<T>(): { open: boolean; state: T } | null {
-  try {
-    const v = sessionStorage.getItem(STEPPER);
-    return v ? JSON.parse(v) : null;
-  } catch {
-    return null;
-  }
-}
-
-export function saveStepperUI<T>(open: boolean, state: T) {
-  try { sessionStorage.setItem(STEPPER, JSON.stringify({ open, state })); } catch { /* noop */ }
-}
-
-const SCROLL = "elena_scroll";
-
-export function loadScroll(): number | null {
-  const v = sessionStorage.getItem(SCROLL);
-  return v == null ? null : Number(v);
-}
-
-export function saveScroll(top: number) {
-  try { sessionStorage.setItem(SCROLL, String(top)); } catch { /* noop */ }
+export function rememberName(name: string) {
+  if (name && name.trim()) localStorage.setItem("elena_nombre", name.trim());
 }
