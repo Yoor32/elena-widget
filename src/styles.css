@@ -93,7 +93,7 @@
 .lw-help-empty{color:var(--lw-muted);font-size:13px;text-align:center;padding:16px}
 .lw-faq-list{display:flex;flex-direction:column;gap:8px}
 .lw-faq{background:#fff;border:1px solid var(--lw-border);border-radius:12px;overflow:hidden}
-.lw-faq-q{width:100%;background:none;border:none;padding:13px 14px;display:flex;justify-content:space-between;gap:10px;align-items:center;cursor:pointer;text-align:left;font-size:13.5px;font-weight:600;color:var(--lw-text)}
+.lw-faq-q{width:100%;background:none;border:none;padding:13px 14px;display:flex;justify-content:space-between;gqp:10px;align-items:center;cursor:pointer;text-align:left;font-size:13.5px;font-weight:600;color:var(--lw-text)}
 .lw-faq-caret{color:var(--lw-accent);font-size:18px}
 .lw-faq-a{padding:0 14px 13px;font-size:13px;line-height:1.5;color:#5a4a3c}
 .lw-help-ask{background:none;border:none;color:var(--lw-primary);font-weight:700;font-size:13px;cursor:pointer;padding:6px}
@@ -143,3 +143,6 @@
 .lw-form-done{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;padding:24px;text-align:center}
 .lw-form-check{width:60px;height:60px;border-radius:50%;background:#1d9e75;color:#fff;font-size:30px;display:flex;align-items:center;justify-content:center}
 .lw-form-done p{font-size:14px;line-height:1.5;color:#4a3a30}
+
+/* fix: success-screen close button must not stretch */
+.lw-form-done .lw-form-submit{flex:0 0 auto;align-self:center;min-width:160px;max-width:260px;height:auto}
