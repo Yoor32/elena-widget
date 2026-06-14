@@ -5,6 +5,7 @@ import { base64Bytes, compressImage, inferTipo, isAllowedImage, MAX_UPLOAD_BYTES
 import { PrecotState, PrecotTipo, PRECOT_EMPTY, detectPrecot } from "../lib/precot";
 import { PrecotStepper } from "./PrecotStepper";
 import { contextualGreeting } from "../lib/context";
+import { postChat, ChatTimeoutError } from "../lib/api";
 
 function formatPrice(p: number | null): string {
   if (p == null) return "Cotizable";
@@ -170,16 +171,14 @@ export function ChatPanel({ initialMessage, initialStepper }: {
     setInput("");
     setBusy(true);
     try {
-      const r = await fetch(CONFIG.endpoints.chat, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ session_id: getSessionId(), message: payload })
-      });
-      const data = await r.json();
-      const products: Product[] = Array.isArray(data.products) ? data.products : [];
-      setMsgs(m => [...m, { role: "bot", text: data.reply || "Disculpe, ¿me lo repite?", products }]);
-    } catch {
-      setMsgs(m => [...m, { role: "bot", text: "Tuvimos un problema de conexión. ¿Lo intentamos de nuevo?" }]);
+      // Chat asíncrono: POST /chat-async → polling /chat-result hasta `done`.
+      const data = await postChat(payload);
+      setMsgs(m => [...m, { role: "bot", text: data.reply, products: data.products }]);
+    } catch (e) {
+      const text = e instanceof ChatTimeoutError
+        ? "Seguimos procesando su solicitud; por favor inténtelo de nuevo en un momento."
+        : "Tuvimos un problema de conexión. ¿Lo intentamos de nuevo?";
+      setMsgs(m => [...m, { role: "bot", text }]);
     } finally {
       setBusy(false);
     }

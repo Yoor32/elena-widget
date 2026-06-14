@@ -10,7 +10,9 @@ export type QuickAction = {
 export const CONFIG = {
   agentId: "agent_4101ktatk4azetysvfp55qxs05f4",
   endpoints: {
-    chat: "https://yoor32.app.n8n.cloud/webhook/chat",
+    chat: "https://yoor32.app.n8n.cloud/webhook/chat", // síncrono — fallback
+    chatAsync: "https://yoor32.app.n8n.cloud/webhook/chat-async", // accept → job_id
+    chatResult: "https://yoor32.app.n8n.cloud/webhook/chat-result", // polling
     help: "https://yoor32.app.n8n.cloud/webhook/elena-help",
     form: "https://yoor32.app.n8n.cloud/webhook/elena-form",
     upload: "https://yoor32.app.n8n.cloud/webhook/upload-media"
