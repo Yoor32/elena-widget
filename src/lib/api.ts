@@ -45,6 +45,8 @@ async function postChatSync(message: string): Promise<ChatReply> {
 // - Si el accept falla, cae al endpoint síncrono (sigue vivo y arreglado).
 // - Si tras ~60 s sigue `processing`, lanza ChatTimeoutError.
 export async function postChat(message: string): Promise<ChatReply> {
+  if (!CONFIG.useAsyncChat) return postChatSync(message); // fallback forzado por config
+
   let jobId = "";
   try {
     const acc = await fetch(CONFIG.endpoints.chatAsync, {

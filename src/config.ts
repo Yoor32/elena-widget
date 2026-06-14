@@ -17,6 +17,8 @@ export const CONFIG = {
     form: "https://yoor32.app.n8n.cloud/webhook/elena-form",
     upload: "https://yoor32.app.n8n.cloud/webhook/upload-media"
   },
+  // Chat asíncrono por defecto; ponlo en false para forzar el endpoint síncrono /chat.
+  useAsyncChat: true,
   brand: {
     name: "Mueblería Misantla",
     assistant: "Elena",
