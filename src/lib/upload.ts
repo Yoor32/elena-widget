@@ -74,7 +74,7 @@ export async function uploadMedia(params: {
   data_base64: string;
   session_id: string;
 }): Promise<UploadResult> {
-  const r = await fetch(CONFIG.uploadWebhook, {
+  const r = await fetch(CONFIG.endpoints.upload, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(params)

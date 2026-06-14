@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import { CONFIG } from "../config";
 import { ChatMsg, Product, getSessionId, loadHistory, saveHistory, loadStepperUI, saveStepperUI, loadScroll, saveScroll } from "../lib/session";
 import { base64Bytes, compressImage, inferTipo, isAllowedImage, MAX_UPLOAD_BYTES, uploadMedia } from "../lib/upload";
-import { PrecotState, PRECOT_EMPTY, detectPrecot } from "../lib/precot";
+import { PrecotState, PrecotTipo, PRECOT_EMPTY, detectPrecot } from "../lib/precot";
 import { PrecotStepper } from "./PrecotStepper";
 import { contextualGreeting } from "../lib/context";
 
@@ -85,7 +85,10 @@ function ProductCards({ products, onSend }: { products: Product[]; onSend: (text
   );
 }
 
-export function ChatPanel() {
+export function ChatPanel({ initialMessage, initialStepper }: {
+  initialMessage?: string | null;
+  initialStepper?: PrecotTipo | null;
+} = {}) {
   const [msgs, setMsgs] = useState<ChatMsg[]>(loadHistory());
   const [input, setInput] = useState("");
   const [busy, setBusy] = useState(false);
@@ -138,6 +141,26 @@ export function ChatPanel() {
   // Persiste el estado del stepper al cambiar.
   useEffect(() => { saveStepperUI(stepperOpen, stepper); }, [stepperOpen, stepper]);
 
+  // Mensaje enrutado desde Inicio/Ayuda/Cotizador → se envía una vez por valor.
+  const sentInitial = useRef<string | null>(null);
+  useEffect(() => {
+    if (initialMessage && sentInitial.current !== initialMessage) {
+      sentInitial.current = initialMessage;
+      send(initialMessage);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [initialMessage]);
+
+  // Apertura directa del pre-cotizador (p. ej. "Cotizar a medida" → Puerta de tambor).
+  const openedStepper = useRef<PrecotTipo | null>(null);
+  useEffect(() => {
+    if (initialStepper && openedStepper.current !== initialStepper) {
+      openedStepper.current = initialStepper;
+      setStepper({ ...PRECOT_EMPTY, tipo: initialStepper });
+      setStepperOpen(true);
+    }
+  }, [initialStepper]);
+
   // `payload` permite enviar al backend un mensaje distinto al que ve el cliente
   // (p. ej. fotos: el ticket recibe la URL privada, la burbuja no la muestra).
   async function send(text: string, payload: string = text) {
@@ -147,7 +170,7 @@ export function ChatPanel() {
     setInput("");
     setBusy(true);
     try {
-      const r = await fetch(CONFIG.chatWebhook, {
+      const r = await fetch(CONFIG.endpoints.chat, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ session_id: getSessionId(), message: payload })

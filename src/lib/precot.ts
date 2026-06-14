@@ -15,13 +15,13 @@ export const PRECOT_EMPTY: PrecotState = { tipo: null, medida: "", madera: null,
 export const MADERAS = ["Cedro", "Caoba"]; // mismo precio
 export const ACABADOS = ["Poliuretano", "Aceite de linaza", "Cera"];
 
+// Único servicio con pre-cotizador visual en el chat: puerta de tambor.
+// (Closet usa el mini-form de medidas; cocina/mueble/entrada son conversacionales.)
 const TIPO_PATTERNS: { tipo: PrecotTipo; re: RegExp }[] = [
-  { tipo: "puerta de tambor", re: /puertas?\s+de\s+tambor/i },
-  { tipo: "cocina", re: /cocina/i },
-  { tipo: "closet", re: /cl[oó]sets?/i }
+  { tipo: "puerta de tambor", re: /puertas?\s+de\s+tambor/i }
 ];
 
-// Detecta si conviene ofrecer el stepper: el texto menciona uno de los tipos + contexto de cotizar.
+// Detecta si conviene ofrecer el stepper: el texto menciona puerta de tambor + contexto de cotizar.
 export function detectPrecot(text: string): PrecotTipo | null {
   if (!text || !/cotiz|presupuest|precio/i.test(text)) return null;
   for (const p of TIPO_PATTERNS) if (p.re.test(text)) return p.tipo;
