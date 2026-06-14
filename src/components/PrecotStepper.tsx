@@ -1,11 +1,11 @@
 import {
-  ACABADOS,
-  MADERAS,
   PrecotState,
   composePrecotMessage,
   isPrecotComplete,
   medidaLabel
 } from "../lib/precot";
+import { ESTILOS, ACABADOS, MADERAS, refLabel } from "../lib/refs";
+import { RefPicker } from "./RefPicker";
 
 export function PrecotStepper({
   state,
@@ -20,7 +20,7 @@ export function PrecotStepper({
   onCancel: () => void;
   disabled?: boolean;
 }) {
-  const { tipo, medida, madera, acabado } = state;
+  const { tipo, medida, madera, estilo, acabado } = state;
   const medidaOk = Number.isFinite(Number(medida)) && Number(medida) > 0;
   const complete = isPrecotComplete(state);
 
@@ -41,15 +41,16 @@ export function PrecotStepper({
       </div>
 
       <div className="lw-step-summary">
-        {tipo && <Chosen label={tipo} reset={() => setState({ ...state, tipo: null, medida: "", madera: null, acabado: null })} />}
+        {tipo && <Chosen label={tipo} reset={() => setState({ ...PRECOT_RESET, tipo: null })} />}
         {tipo && medidaOk && (
           <Chosen
             label={`${medida} ${tipo === "puerta de tambor" ? "pza" : "m"}`}
-            reset={() => setState({ ...state, medida: "", madera: null, acabado: null })}
+            reset={() => setState({ ...state, medida: "", madera: null, estilo: null, acabado: null })}
           />
         )}
-        {madera && <Chosen label={madera} reset={() => setState({ ...state, madera: null, acabado: null })} />}
-        {acabado && <Chosen label={acabado} reset={() => setState({ ...state, acabado: null })} />}
+        {madera && <Chosen label={refLabel(MADERAS, madera)} reset={() => setState({ ...state, madera: null, estilo: null, acabado: null })} />}
+        {estilo && <Chosen label={refLabel(ESTILOS, estilo)} reset={() => setState({ ...state, estilo: null, acabado: null })} />}
+        {acabado && <Chosen label={refLabel(ACABADOS, acabado)} reset={() => setState({ ...state, acabado: null })} />}
       </div>
 
       {!tipo && (
@@ -87,25 +88,32 @@ export function PrecotStepper({
           <span className="lw-step-q">Madera (mismo precio)</span>
           <div className="lw-step-chips">
             {MADERAS.map(m => (
-              <button key={m} type="button" onClick={() => setState({ ...state, madera: m })} disabled={disabled}>
-                {m}
+              <button key={m.id} type="button" onClick={() => setState({ ...state, madera: m.id })} disabled={disabled}>
+                {m.label}
               </button>
             ))}
           </div>
         </div>
       )}
 
-      {tipo && medidaOk && madera && !acabado && (
-        <div className="lw-step-row">
-          <span className="lw-step-q">Acabado</span>
-          <div className="lw-step-chips">
-            {ACABADOS.map(a => (
-              <button key={a} type="button" onClick={() => setState({ ...state, acabado: a })} disabled={disabled}>
-                {a}
-              </button>
-            ))}
-          </div>
-        </div>
+      {tipo && medidaOk && madera && !estilo && (
+        <RefPicker
+          label="Estilo"
+          options={ESTILOS}
+          value={estilo}
+          onChange={id => setState({ ...state, estilo: id })}
+          disabled={disabled}
+        />
+      )}
+
+      {tipo && medidaOk && madera && estilo && !acabado && (
+        <RefPicker
+          label="Acabado"
+          options={ACABADOS}
+          value={acabado}
+          onChange={id => setState({ ...state, acabado: id })}
+          disabled={disabled}
+        />
       )}
 
       {complete && (
@@ -121,3 +129,5 @@ export function PrecotStepper({
     </div>
   );
 }
+
+const PRECOT_RESET = { medida: "", madera: null, estilo: null, acabado: null };

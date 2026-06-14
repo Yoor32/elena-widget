@@ -1,5 +1,7 @@
 import { useState, type ReactNode } from "react";
 import type { PrecotTipo } from "../lib/precot";
+import { ESTILOS, ACABADOS, MADERAS, refLabel } from "../lib/refs";
+import { RefPicker } from "./RefPicker";
 
 // "Cotizar a medida": selector que enruta a captura VISUAL (pre-cotizador de puerta
 // de tambor, mini-form de medidas de closet) o CONVERSACIONAL (cocina, mueble,
@@ -30,14 +32,21 @@ export function SmartForm({ onClose, onGoChat, onOpenPrecot }: {
   const [alto, setAlto] = useState("");
   const [prof, setProf] = useState("");
   const [gama, setGama] = useState<string>("");
+  // Referencias visuales (opcionales): tono de madera, estilo y acabado.
+  const [madera, setMadera] = useState<string | null>(null);
+  const [estilo, setEstilo] = useState<string | null>(null);
+  const [acabado, setAcabado] = useState<string | null>(null);
 
   const closetOk =
     [ancho, alto, prof].every(v => Number.isFinite(Number(v)) && Number(v) > 0) && !!gama;
 
   function submitCloset() {
-    const msg =
+    let msg =
       `Quiero cotizar un clóset a medida de ${ancho} m de ancho × ${alto} m de alto × ${prof} m de profundidad. ` +
       `Material: ${gama}.`;
+    if (madera) msg += ` Madera: ${refLabel(MADERAS, madera).toLowerCase()}.`;
+    if (estilo) msg += ` Estilo: ${refLabel(ESTILOS, estilo).toLowerCase()}.`;
+    if (acabado) msg += ` Acabado: ${refLabel(ACABADOS, acabado).toLowerCase()}.`;
     onGoChat(msg);
   }
 
@@ -98,6 +107,9 @@ export function SmartForm({ onClose, onGoChat, onOpenPrecot }: {
                 ))}
               </div>
             </div>
+            <RefPicker label="Tono de madera (opcional)" options={MADERAS} value={madera} onChange={setMadera} />
+            <RefPicker label="Estilo (opcional)" options={ESTILOS} value={estilo} onChange={setEstilo} />
+            <RefPicker label="Acabado (opcional)" options={ACABADOS} value={acabado} onChange={setAcabado} />
           </>
         )}
       </div>
