@@ -30,7 +30,7 @@ export const CONFIG = {
   // Burbuja proactiva del launcher (se muestra 1 vez por sesión).
   launcherGreeting: "¡Hola! Soy Elena 👋 ¿Te ayudo con tu mueble?",
   social: [
-    { id: "whatsapp", label: "WhatsApp", url: "https://wa.me/2211845926" },
+    { id: "whatsapp", label: "WhatsApp", url: "https://wa.me/522211845926" },
     { id: "instagram", label: "Instagram", url: "https://instagram.com/mueblerias_misantla" },
     { id: "facebook", label: "Facebook", url: "https://facebook.com/fabrica.misantla" },
     { id: "pinterest", label: "Pinterest", url: "https://pinterest.com/MuebleriaMisantla" }
