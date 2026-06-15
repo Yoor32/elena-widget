@@ -2,14 +2,21 @@ import { useEffect, useRef, useState, lazy, Suspense, Component, type ReactNode 
 import { CONFIG, QuickAction } from "./config";
 import { Home } from "./components/Home";
 import { ChatPanel } from "./components/ChatPanel";
-import { HelpPanel } from "./components/HelpPanel";
-import { NewsPanel } from "./components/NewsPanel";
-import { SmartForm } from "./components/SmartForm";
 import { IconHome, IconChat, IconHelp, IconNews } from "./components/Icons";
 import type { PrecotTipo } from "./lib/precot";
 
+// Paneles secundarios (no son el aterrizaje por defecto) → chunks lazy.
+const HelpPanel = lazy(() => import("./components/HelpPanel").then(m => ({ default: m.HelpPanel })));
+const NewsPanel = lazy(() => import("./components/NewsPanel").then(m => ({ default: m.NewsPanel })));
+const SmartForm = lazy(() => import("./components/SmartForm").then(m => ({ default: m.SmartForm })));
+
 type Tab = "home" | "messages" | "help" | "news";
 const BUBBLE_KEY = "elena_bubble_shown";
+
+// Fallback ligero mientras carga un panel lazy.
+function PanelLoading() {
+  return <div className="lw-loading"><div className="lw-spinner" /></div>;
+}
 
 // El módulo de voz (CallOverlay → @elevenlabs/react) se carga BAJO DEMANDA:
 // no entra en el bundle inicial, solo cuando el usuario abre la llamada.
@@ -125,10 +132,12 @@ export function App() {
           </header>
 
           <div className="lw-body">
-            {tab === "home" && <Home onAction={handleAction} onSearch={() => setTab("help")} onAsk={() => goChat()} />}
-            {tab === "messages" && <ChatPanel initialMessage={preset} initialStepper={presetStepper} />}
-            {tab === "help" && <HelpPanel onAsk={(q) => goChat(q)} />}
-            {tab === "news" && <NewsPanel />}
+            <Suspense fallback={<PanelLoading />}>
+              {tab === "home" && <Home onAction={handleAction} onSearch={() => setTab("help")} onAsk={() => goChat()} />}
+              {tab === "messages" && <ChatPanel initialMessage={preset} initialStepper={presetStepper} />}
+              {tab === "help" && <HelpPanel onAsk={(q) => goChat(q)} />}
+              {tab === "news" && <NewsPanel />}
+            </Suspense>
           </div>
 
           <nav className="lw-nav">
@@ -152,11 +161,13 @@ export function App() {
             </VoiceBoundary>
           )}
           {showForm && (
-            <SmartForm
-              onClose={() => setShowForm(false)}
-              onGoChat={(msg) => { setShowForm(false); goChat(msg); }}
-              onOpenPrecot={(tipo) => { setShowForm(false); goPrecot(tipo); }}
-            />
+            <Suspense fallback={<PanelLoading />}>
+              <SmartForm
+                onClose={() => setShowForm(false)}
+                onGoChat={(msg) => { setShowForm(false); goChat(msg); }}
+                onOpenPrecot={(tipo) => { setShowForm(false); goPrecot(tipo); }}
+              />
+            </Suspense>
           )}
         </div>
       )}

@@ -158,6 +158,8 @@
 .lw-call-status{font-size:15px;color:#4a3a30}
 .lw-spinner{width:48px;height:48px;border-radius:50%;border:4px solid var(--lw-border);border-top-color:var(--lw-primary);animation:lw-spin .8s linear infinite}
 @keyframes lw-spin{to{transform:rotate(360deg)}}
+.lw-loading{flex:1;display:flex;align-items:center;justify-content:center;padding:32px}
+.lw-loading .lw-spinner{width:36px;height:36px}
 .lw-call-error{color:#b03a2e;font-size:13px}
 .lw-call-start,.lw-call-end{border:none;border-radius:999px;padding:12px 28px;font-size:15px;cursor:pointer;color:#fff}
 .lw-call-start{background:#1d9e75}
