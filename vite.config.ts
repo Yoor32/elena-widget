@@ -8,6 +8,7 @@ export default defineConfig({
     rollupOptions: {
       output: {
         entryFileNames: "elena-widget.js",
+        chunkFileNames: "elena-widget-[name]-[hash].js", // chunks lazy (p. ej. voz)
         assetFileNames: "elena-widget.[ext]"
       }
     }

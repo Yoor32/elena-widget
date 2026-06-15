@@ -1,16 +1,52 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, lazy, Suspense, Component, type ReactNode } from "react";
 import { CONFIG, QuickAction } from "./config";
 import { Home } from "./components/Home";
 import { ChatPanel } from "./components/ChatPanel";
 import { HelpPanel } from "./components/HelpPanel";
 import { NewsPanel } from "./components/NewsPanel";
-import { CallOverlay } from "./components/CallOverlay";
 import { SmartForm } from "./components/SmartForm";
 import { IconHome, IconChat, IconHelp, IconNews } from "./components/Icons";
 import type { PrecotTipo } from "./lib/precot";
 
 type Tab = "home" | "messages" | "help" | "news";
 const BUBBLE_KEY = "elena_bubble_shown";
+
+// El módulo de voz (CallOverlay → @elevenlabs/react) se carga BAJO DEMANDA:
+// no entra en el bundle inicial, solo cuando el usuario abre la llamada.
+const importVoice = () => import("./components/CallOverlay").then(m => ({ default: m.CallOverlay }));
+
+function VoiceLoading({ onClose }: { onClose: () => void }) {
+  return (
+    <div className="lw-call-overlay">
+      <button className="lw-call-back" onClick={onClose} aria-label="Cerrar">✕</button>
+      <div className="lw-spinner" />
+      <p className="lw-call-status">Conectando…</p>
+    </div>
+  );
+}
+
+// Error boundary: si el chunk de voz no carga (red), muestra aviso suave + reintentar.
+class VoiceBoundary extends Component<
+  { onClose: () => void; onRetry: () => void; children: ReactNode },
+  { failed: boolean }
+> {
+  state = { failed: false };
+  static getDerivedStateFromError() { return { failed: true }; }
+  render() {
+    if (this.state.failed) {
+      return (
+        <div className="lw-call-overlay">
+          <button className="lw-call-back" onClick={this.props.onClose} aria-label="Cerrar">✕</button>
+          <p className="lw-call-status">No se pudo cargar la llamada. Revise su conexión.</p>
+          <button className="lw-call-start" onClick={() => { this.setState({ failed: false }); this.props.onRetry(); }}>
+            Reintentar
+          </button>
+        </div>
+      );
+    }
+    return this.props.children;
+  }
+}
 
 export function App() {
   const [open, setOpen] = useState(false);
@@ -20,6 +56,8 @@ export function App() {
   const [preset, setPreset] = useState<string | null>(null);
   const [presetStepper, setPresetStepper] = useState<PrecotTipo | null>(null);
   const [bubble, setBubble] = useState(false);
+  // Componente de voz lazy; se recrea para reintentar si falla la carga del chunk.
+  const [Voice, setVoice] = useState(() => lazy(importVoice));
   const bubbleTimer = useRef<number | null>(null);
 
   // Burbuja proactiva del launcher: aparece tras ~4 s, 1 vez por sesión.
@@ -106,7 +144,13 @@ export function App() {
             ))}
           </nav>
 
-          {calling && <CallOverlay onClose={() => setCalling(false)} />}
+          {calling && (
+            <VoiceBoundary onClose={() => setCalling(false)} onRetry={() => setVoice(() => lazy(importVoice))}>
+              <Suspense fallback={<VoiceLoading onClose={() => setCalling(false)} />}>
+                <Voice onClose={() => setCalling(false)} />
+              </Suspense>
+            </VoiceBoundary>
+          )}
           {showForm && (
             <SmartForm
               onClose={() => setShowForm(false)}
