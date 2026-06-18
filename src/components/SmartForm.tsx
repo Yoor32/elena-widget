@@ -1,6 +1,6 @@
 import { useState, type ReactNode } from "react";
 import type { PrecotTipo } from "../lib/precot";
-import { ESTILOS, ACABADOS, MADERAS, refLabel } from "../lib/refs";
+import { ACABADOS, MADERAS, refLabel, estiloLabel, refsEstilo } from "../lib/refs";
 import { RefPicker } from "./RefPicker";
 
 // "Cotizar a medida": selector que enruta a captura VISUAL (pre-cotizador de puerta
@@ -45,7 +45,7 @@ export function SmartForm({ onClose, onGoChat, onOpenPrecot }: {
       `Quiero cotizar un clóset a medida de ${ancho} m de ancho × ${alto} m de alto × ${prof} m de profundidad. ` +
       `Material: ${gama}.`;
     if (madera) msg += ` Madera: ${refLabel(MADERAS, madera).toLowerCase()}.`;
-    if (estilo) msg += ` Estilo: ${refLabel(ESTILOS, estilo).toLowerCase()}.`;
+    if (estilo) msg += ` Estilo: ${estiloLabel(estilo).toLowerCase()}.`;
     if (acabado) msg += ` Acabado: ${refLabel(ACABADOS, acabado).toLowerCase()}.`;
     onGoChat(msg);
   }
@@ -108,7 +108,7 @@ export function SmartForm({ onClose, onGoChat, onOpenPrecot }: {
               </div>
             </div>
             <RefPicker label="Tono de madera (opcional)" options={MADERAS} value={madera} onChange={setMadera} />
-            <RefPicker label="Estilo (opcional)" options={ESTILOS} value={estilo} onChange={setEstilo} />
+            <RefPicker label="Estilo (opcional)" options={refsEstilo.closet} value={estilo} onChange={setEstilo} />
             <RefPicker label="Acabado (opcional)" options={ACABADOS} value={acabado} onChange={setAcabado} />
           </>
         )}

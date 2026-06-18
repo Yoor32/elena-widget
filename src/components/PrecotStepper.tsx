@@ -2,9 +2,10 @@ import {
   PrecotState,
   composePrecotMessage,
   isPrecotComplete,
-  medidaLabel
+  medidaLabel,
+  servicioDePrecot
 } from "../lib/precot";
-import { ESTILOS, ACABADOS, MADERAS, refLabel } from "../lib/refs";
+import { ACABADOS, MADERAS, refLabel, estiloLabel, refsEstilo } from "../lib/refs";
 import { RefPicker } from "./RefPicker";
 
 export function PrecotStepper({
@@ -49,7 +50,7 @@ export function PrecotStepper({
           />
         )}
         {madera && <Chosen label={refLabel(MADERAS, madera)} reset={() => setState({ ...state, madera: null, estilo: null, acabado: null })} />}
-        {estilo && <Chosen label={refLabel(ESTILOS, estilo)} reset={() => setState({ ...state, estilo: null, acabado: null })} />}
+        {estilo && <Chosen label={estiloLabel(estilo)} reset={() => setState({ ...state, estilo: null, acabado: null })} />}
         {acabado && <Chosen label={refLabel(ACABADOS, acabado)} reset={() => setState({ ...state, acabado: null })} />}
       </div>
 
@@ -99,7 +100,7 @@ export function PrecotStepper({
       {tipo && medidaOk && madera && !estilo && (
         <RefPicker
           label="Estilo"
-          options={ESTILOS}
+          options={refsEstilo[servicioDePrecot(tipo)]}
           value={estilo}
           onChange={id => setState({ ...state, estilo: id })}
           disabled={disabled}

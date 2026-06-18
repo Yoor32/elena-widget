@@ -20,6 +20,11 @@ function isPreDiseno(p: Product): boolean {
   return p.disponibilidad === "Pre-diseño AI" || (p.precio == null && /pre-?dise/i.test(p.disponibilidad || ""));
 }
 
+// "En existencia" → compra inmediata (abre tienda); "Sobre pedido"/"Agotado" → pre-orden (chat).
+function enExistencia(p: Product): boolean {
+  return /en\s*existencia/i.test(p.disponibilidad || "");
+}
+
 function PreDisenoCard({ p, onSend }: { p: Product; onSend: (text: string) => void }) {
   return (
     <div className="lw-card lw-card-ai">
@@ -61,22 +66,28 @@ function ProductCards({ products, onSend }: { products: Product[]; onSend: (text
             )}
             <div className="lw-card-body">
               <div className="lw-card-name">{p.nombre}</div>
+              {p.descripcion && <div className="lw-card-desc">{p.descripcion}</div>}
               <div className="lw-card-meta">
                 <span className="lw-card-price">{formatPrice(p.precio)}</span>
-                {p.disponibilidad && <span className="lw-card-stock">{p.disponibilidad}</span>}
+                {p.disponibilidad && (
+                  <span className={`lw-card-stock ${enExistencia(p) ? "in" : "pre"}`}>
+                    {enExistencia(p) ? "Compra inmediata" : "Pre-orden"}
+                  </span>
+                )}
               </div>
               <div className="lw-card-actions">
-                {p.link && (
+                {enExistencia(p) && p.link ? (
                   <a className="lw-card-btn" href={p.link} target="_blank" rel="noopener noreferrer">
-                    Ver producto
+                    Comprar en tienda
                   </a>
+                ) : (
+                  <button
+                    className="lw-card-btn"
+                    onClick={() => onSend(`Quiero pre-ordenar la ${p.nombre}`)}
+                  >
+                    Pre-ordenar / Cotizar
+                  </button>
                 )}
-                <button
-                  className="lw-card-btn lw-card-btn-ghost"
-                  onClick={() => onSend(`Quiero agendar cita para ver ${p.nombre}`)}
-                >
-                  Agendar cita para verlo
-                </button>
               </div>
             </div>
           </div>

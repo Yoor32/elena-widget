@@ -1,9 +1,16 @@
 // Stepper de pre-cotización (mejora progresiva). NO llama APIs: compone UN mensaje
 // natural que se envía al /chat; el backend hace la pre-cotización real.
 
-import { ESTILOS, ACABADOS, MADERAS, refLabel } from "./refs";
+import { ACABADOS, MADERAS, refLabel, estiloLabel, Servicio } from "./refs";
 
 export type PrecotTipo = "puerta de tambor" | "cocina" | "closet";
+
+// Mapea el tipo de pre-cotización al servicio cuyas imágenes de estilo aplican.
+export function servicioDePrecot(tipo: PrecotTipo): Servicio {
+  if (tipo === "closet") return "closet";
+  if (tipo === "cocina") return "cocina";
+  return "tambor"; // puerta de tambor
+}
 
 export type PrecotState = {
   tipo: PrecotTipo | null;
@@ -41,7 +48,7 @@ export function isPrecotComplete(s: PrecotState): boolean {
 // "Quiero pre-cotizar 3 puertas de tambor en cedro, estilo contemporáneo, acabado cera"
 export function composePrecotMessage(s: PrecotState): string {
   const madera = refLabel(MADERAS, s.madera).toLowerCase();
-  const estilo = refLabel(ESTILOS, s.estilo).toLowerCase();
+  const estilo = estiloLabel(s.estilo).toLowerCase();
   const acabado = refLabel(ACABADOS, s.acabado).toLowerCase();
   const extra = `, estilo ${estilo}, acabado ${acabado}`;
   if (s.tipo === "puerta de tambor") {

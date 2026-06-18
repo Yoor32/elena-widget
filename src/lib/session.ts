@@ -15,6 +15,8 @@ export type Product = {
   link: string;
   imagen: string;
   disponibilidad: string;
+  categoria?: string;
+  descripcion?: string;
 };
 
 export type ChatMsg = { role: "user" | "bot"; text: string; products?: Product[] };

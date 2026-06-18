@@ -42,7 +42,7 @@ export const CONFIG = {
     garantias: "https://www.muebleriamisantla.com/Garantias"
   },
   quickActions: [
-    { id: "catalogo", label: "Ver catálogo", sub: "Muebles en cedro listos para envío", emoji: "🪑", kind: "link", payload: "https://www.muebleriamisantla.com/tienda" },
+    { id: "catalogo", label: "Ver catálogo", sub: "Muebles en cedro listos para envío", emoji: "🪑", kind: "chat", payload: "Quiero ver el catálogo en línea" },
     { id: "cotizar", label: "Cotizar a medida", sub: "Puerta, closet, cocina o mueble único", emoji: "📐", kind: "form", payload: "cotizacion" },
     { id: "rastrear", label: "Rastrear pedido", sub: "Estado de tu compra", emoji: "📦", kind: "chat", payload: "Quiero rastrear mi pedido" },
     { id: "asesoria", label: "Agendar asesoría", sub: "Showroom, videollamada o domicilio", emoji: "🗓️", kind: "chat", payload: "Quiero agendar una asesoría" },

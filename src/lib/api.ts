@@ -24,9 +24,14 @@ const POLL_DEADLINE_MS = 60000; // ~60 s de cortesía
 const delay = (ms: number) => new Promise<void>(res => setTimeout(res, ms));
 
 function normalizeReply(data: any): ChatReply {
+  // Los productos pueden venir en `products` o en `function_response.products`.
+  const products =
+    Array.isArray(data?.products) ? data.products :
+    Array.isArray(data?.function_response?.products) ? data.function_response.products :
+    [];
   return {
     reply: data?.reply || "Disculpe, ¿me lo repite?",
-    products: Array.isArray(data?.products) ? data.products : [],
+    products,
     ticket_id: data?.ticket_id || ""
   };
 }
