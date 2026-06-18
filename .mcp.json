@@ -1,0 +1,12 @@
+{
+  "mcpServers": {
+    "ecwid": {
+      "command": "node",
+      "args": ["${ECWID_MCP_PATH:-/Users/yoor32/ecwid-mcp-server/dist/index.js}"],
+      "env": {
+        "ECWID_STORE_ID": "${ECWID_STORE_ID}",
+        "ECWID_API_TOKEN": "${ECWID_API_TOKEN}"
+      }
+    }
+  }
+}
