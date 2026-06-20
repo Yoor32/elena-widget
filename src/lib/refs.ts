@@ -22,28 +22,28 @@ const ESTILO_META: { id: string; label: string }[] = [
 // Imagen específica del mueble de cada servicio (pipeline cedro, fondo de estudio).
 const ESTILO_IMG: Record<Servicio, Record<string, string>> = {
   tambor: {
-    contemporaneo: `${BASE}/ST-tambor_cont-mqjrrfp1-1781803444346.png`,
-    clasico: `${BASE}/ST-tambor_clasico-4827-1781803641296.png`,
-    minimalista: `${BASE}/ST-tambor_minimalista-5193-1781803669120.png`,
-    artesanal_tallado: `${BASE}/ST-tambor_artesanal-6310-1781803702059.png`
+    contemporaneo: `${BASE}/RC-tambor_contemporaneo-1781969615541.png`,
+    clasico: `${BASE}/RC-tambor_clasico-1781969647289.png`,
+    minimalista: `${BASE}/RC-tambor_minimalista-1781969683158.png`,
+    artesanal_tallado: `${BASE}/RC-tambor_artesanal-1781969721594.png`
   },
   closet: {
-    contemporaneo: `${BASE}/ST-closet_contemporaneo-7044-1781803740207.png`,
-    clasico: `${BASE}/ST-closet_clasico-7711-1781803775882.png`,
-    minimalista: `${BASE}/ST-closet_minimalista-8420-1781803811940.png`,
-    artesanal_tallado: `${BASE}/ST-closet_artesanal-9156-1781803850598.png`
+    contemporaneo: `${BASE}/RC-closet_contemporaneo-1781969758271.png`,
+    clasico: `${BASE}/RC-closet_clasico-1781969794491.png`,
+    minimalista: `${BASE}/RC-closet_minimalista-1781969835211.png`,
+    artesanal_tallado: `${BASE}/RC-closet_artesanal-1781969869009.png`
   },
   entrada: {
-    contemporaneo: `${BASE}/ST-entrada_contemporaneo-1077-1781803888413.png`,
-    clasico: `${BASE}/ST-entrada_clasico-2388-1781803924823.png`,
-    minimalista: `${BASE}/ST-entrada_minimalista-3095-1781803950704.png`,
-    artesanal_tallado: `${BASE}/ST-entrada_artesanal-4502-1781803973596.png`
+    contemporaneo: `${BASE}/RC-entrada_contemporaneo-1781969905199.png`,
+    clasico: `${BASE}/RC-entrada_clasico-1781969944232.png`,
+    minimalista: `${BASE}/RC-entrada_minimalista-1781969982702.png`,
+    artesanal_tallado: `${BASE}/RC-entrada_artesanal-1781970021010.png`
   },
   cocina: {
-    contemporaneo: `${BASE}/ST-cocina_contemporaneo-5839-1781803998079.png`,
-    clasico: `${BASE}/ST-cocina_clasico-6546-1781804020901.png`,
-    minimalista: `${BASE}/ST-cocina_minimalista-7253-1781804045526.png`,
-    artesanal_tallado: `${BASE}/ST-cocina_artesanal-8960-1781804069143.png`
+    contemporaneo: `${BASE}/RC-cocina_contemporaneo-1781970057897.png`,
+    clasico: `${BASE}/RC-cocina_clasico-1781970096099.png`,
+    minimalista: `${BASE}/RC-cocina_minimalista-1781970134112.png`,
+    artesanal_tallado: `${BASE}/RC-cocina_artesanal-1781970171014.png`
   }
 };
 
