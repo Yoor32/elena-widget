@@ -1,7 +1,8 @@
 import { useState, type ReactNode } from "react";
 import type { PrecotTipo } from "../lib/precot";
-import { ACABADOS, MADERAS, refLabel, estiloLabel, refsEstilo } from "../lib/refs";
+import { ACABADOS, MADERAS, refLabel, estiloLabel, refsEstilo, colorLabel, type ColorSel } from "../lib/refs";
 import { RefPicker } from "./RefPicker";
+import { ColorPicker } from "./ColorPicker";
 
 // "Cotizar a medida": selector que enruta a captura VISUAL (pre-cotizador de puerta
 // de tambor, mini-form de medidas de closet) o CONVERSACIONAL (cocina, mueble,
@@ -36,6 +37,7 @@ export function SmartForm({ onClose, onGoChat, onOpenPrecot }: {
   const [madera, setMadera] = useState<string | null>(null);
   const [estilo, setEstilo] = useState<string | null>(null);
   const [acabado, setAcabado] = useState<string | null>(null);
+  const [color, setColor] = useState<ColorSel | null>(null);
 
   const closetOk =
     [ancho, alto, prof].every(v => Number.isFinite(Number(v)) && Number(v) > 0) && !!gama;
@@ -47,6 +49,7 @@ export function SmartForm({ onClose, onGoChat, onOpenPrecot }: {
     if (madera) msg += ` Madera: ${refLabel(MADERAS, madera).toLowerCase()}.`;
     if (estilo) msg += ` Estilo: ${estiloLabel(estilo).toLowerCase()}.`;
     if (acabado) msg += ` Acabado: ${refLabel(ACABADOS, acabado).toLowerCase()}.`;
+    if (color) msg += ` Color: ${colorLabel(color)}.`;
     onGoChat(msg);
   }
 
@@ -110,6 +113,7 @@ export function SmartForm({ onClose, onGoChat, onOpenPrecot }: {
             <RefPicker label="Tono de madera (opcional)" options={MADERAS} value={madera} onChange={setMadera} />
             <RefPicker label="Estilo (opcional)" options={refsEstilo.closet} value={estilo} onChange={setEstilo} />
             <RefPicker label="Acabado (opcional)" options={ACABADOS} value={acabado} onChange={setAcabado} />
+            <ColorPicker label="Color (opcional)" value={color} onChange={setColor} />
           </>
         )}
       </div>

@@ -82,3 +82,64 @@ export function refLabel(list: Ref[], id: string | null): string {
   const r = list.find(x => x.id === id);
   return r ? r.label : id;
 }
+
+// ---- Color / acabado superficial (paleta Misantla: swatches reales) -------------
+// El color NO cambia la estructura (siempre cedro/caoba, Gama 1/2); es el acabado
+// superficial. El cliente elige familia + subtono; el label humano viaja al backend.
+//
+// Maderas (CEDRO NATURAL · NOGAL): swatches partidos de los 2 grids reales en PNG,
+// hospedados en el repo elena-media (URL absoluta: el widget se embebe en páginas de
+// terceros, por eso no se usan rutas locales /public).
+// SOLID: NO usa PNG; son chips de color CSS (hex de la paleta) renderizados sin <img>.
+
+export type ColorFamiliaId = "cedro_natural" | "nogal" | "solid";
+export type ColorSel = { familia: ColorFamiliaId; subtono: string };
+
+const SWATCH = "https://raw.githubusercontent.com/Yoor32/elena-media/main/swatches";
+
+// Un swatch es imagen (madera, `img`) o chip de color (solid, `hex`), nunca ambos.
+export type ColorSwatch = { id: string; label: string; img?: string; hex?: string };
+export type ColorFamilia = {
+  familia: ColorFamiliaId;
+  label: string;
+  kind: "image" | "chip";
+  swatches: ColorSwatch[];
+};
+
+// Etiqueta corta visible por swatch dentro de su grupo (el grupo ya nombra la familia).
+function maderaSwatches(familia: "cedro_natural" | "nogal"): ColorSwatch[] {
+  return ["1", "2", "3", "4"].map(n => ({
+    id: n,
+    label: `#${n}`,
+    img: `${SWATCH}/${familia}-${n}.png`
+  }));
+}
+
+export const COLOR_FAMILIAS: ColorFamilia[] = [
+  { familia: "cedro_natural", label: "Cedro natural", kind: "image", swatches: maderaSwatches("cedro_natural") },
+  { familia: "nogal", label: "Nogal", kind: "image", swatches: maderaSwatches("nogal") },
+  {
+    familia: "solid",
+    label: "Solid",
+    kind: "chip",
+    swatches: [
+      { id: "negro", label: "Negro", hex: "#1c1c1c" },
+      { id: "blanco", label: "Blanco", hex: "#f3f1ec" },
+      { id: "gris", label: "Gris", hex: "#6f7479" },
+      { id: "azul_marino", label: "Azul marino", hex: "#20304f" }
+    ]
+  }
+];
+
+const COLOR_FAMILIA_LABEL: Record<ColorFamiliaId, string> = {
+  cedro_natural: "Cedro natural",
+  nogal: "Nogal",
+  solid: "Solid"
+};
+
+// Label humano que viaja al backend: "Cedro natural #2", "Nogal #1", "Solid azul marino".
+export function colorLabel(sel: ColorSel | null): string {
+  if (!sel) return "";
+  if (sel.familia === "solid") return `Solid ${sel.subtono.replace(/_/g, " ")}`;
+  return `${COLOR_FAMILIA_LABEL[sel.familia]} #${sel.subtono}`;
+}

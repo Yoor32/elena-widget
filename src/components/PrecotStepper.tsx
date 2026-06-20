@@ -5,8 +5,9 @@ import {
   medidaLabel,
   servicioDePrecot
 } from "../lib/precot";
-import { ACABADOS, MADERAS, refLabel, estiloLabel, refsEstilo } from "../lib/refs";
+import { ACABADOS, MADERAS, refLabel, estiloLabel, refsEstilo, colorLabel } from "../lib/refs";
 import { RefPicker } from "./RefPicker";
+import { ColorPicker } from "./ColorPicker";
 
 export function PrecotStepper({
   state,
@@ -21,7 +22,7 @@ export function PrecotStepper({
   onCancel: () => void;
   disabled?: boolean;
 }) {
-  const { tipo, medida, madera, estilo, acabado } = state;
+  const { tipo, medida, madera, estilo, acabado, color } = state;
   const medidaOk = Number.isFinite(Number(medida)) && Number(medida) > 0;
   const complete = isPrecotComplete(state);
 
@@ -46,12 +47,13 @@ export function PrecotStepper({
         {tipo && medidaOk && (
           <Chosen
             label={`${medida} ${tipo === "puerta de tambor" ? "pza" : "m"}`}
-            reset={() => setState({ ...state, medida: "", madera: null, estilo: null, acabado: null })}
+            reset={() => setState({ ...state, medida: "", madera: null, estilo: null, acabado: null, color: null })}
           />
         )}
-        {madera && <Chosen label={refLabel(MADERAS, madera)} reset={() => setState({ ...state, madera: null, estilo: null, acabado: null })} />}
-        {estilo && <Chosen label={estiloLabel(estilo)} reset={() => setState({ ...state, estilo: null, acabado: null })} />}
-        {acabado && <Chosen label={refLabel(ACABADOS, acabado)} reset={() => setState({ ...state, acabado: null })} />}
+        {madera && <Chosen label={refLabel(MADERAS, madera)} reset={() => setState({ ...state, madera: null, estilo: null, acabado: null, color: null })} />}
+        {estilo && <Chosen label={estiloLabel(estilo)} reset={() => setState({ ...state, estilo: null, acabado: null, color: null })} />}
+        {acabado && <Chosen label={refLabel(ACABADOS, acabado)} reset={() => setState({ ...state, acabado: null, color: null })} />}
+        {color && <Chosen label={colorLabel(color)} reset={() => setState({ ...state, color: null })} />}
       </div>
 
       {!tipo && (
@@ -117,6 +119,15 @@ export function PrecotStepper({
         />
       )}
 
+      {tipo && medidaOk && madera && estilo && acabado && !color && (
+        <ColorPicker
+          label="Color"
+          value={color}
+          onChange={sel => setState({ ...state, color: sel })}
+          disabled={disabled}
+        />
+      )}
+
       {complete && (
         <button
           type="button"
@@ -131,4 +142,4 @@ export function PrecotStepper({
   );
 }
 
-const PRECOT_RESET = { medida: "", madera: null, estilo: null, acabado: null };
+const PRECOT_RESET = { medida: "", madera: null, estilo: null, acabado: null, color: null };

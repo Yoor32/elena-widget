@@ -1,7 +1,7 @@
 // Stepper de pre-cotización (mejora progresiva). NO llama APIs: compone UN mensaje
 // natural que se envía al /chat; el backend hace la pre-cotización real.
 
-import { ACABADOS, MADERAS, refLabel, estiloLabel, Servicio } from "./refs";
+import { ACABADOS, MADERAS, refLabel, estiloLabel, colorLabel, Servicio, ColorSel } from "./refs";
 
 export type PrecotTipo = "puerta de tambor" | "cocina" | "closet";
 
@@ -18,9 +18,10 @@ export type PrecotState = {
   madera: string | null;  // ref id: "cedro" | "caoba"
   estilo: string | null;  // ref id de estilo
   acabado: string | null; // ref id de acabado
+  color: ColorSel | null; // familia + subtono de la paleta Misantla
 };
 
-export const PRECOT_EMPTY: PrecotState = { tipo: null, medida: "", madera: null, estilo: null, acabado: null };
+export const PRECOT_EMPTY: PrecotState = { tipo: null, medida: "", madera: null, estilo: null, acabado: null, color: null };
 
 // Único servicio con pre-cotizador visual en el chat: puerta de tambor.
 // (Closet usa el mini-form de medidas; cocina/mueble/entrada son conversacionales.)
@@ -41,7 +42,7 @@ export function medidaLabel(tipo: PrecotTipo | null): string {
 
 export function isPrecotComplete(s: PrecotState): boolean {
   const n = Number(s.medida);
-  return !!s.tipo && Number.isFinite(n) && n > 0 && !!s.madera && !!s.estilo && !!s.acabado;
+  return !!s.tipo && Number.isFinite(n) && n > 0 && !!s.madera && !!s.estilo && !!s.acabado && !!s.color;
 }
 
 // Compone el mensaje natural final, p. ej.:
@@ -50,7 +51,7 @@ export function composePrecotMessage(s: PrecotState): string {
   const madera = refLabel(MADERAS, s.madera).toLowerCase();
   const estilo = estiloLabel(s.estilo).toLowerCase();
   const acabado = refLabel(ACABADOS, s.acabado).toLowerCase();
-  const extra = `, estilo ${estilo}, acabado ${acabado}`;
+  const extra = `, estilo ${estilo}, acabado ${acabado}, color ${colorLabel(s.color)}`;
   if (s.tipo === "puerta de tambor") {
     const n = Math.max(1, Math.round(Number(s.medida) || 1));
     const noun = n === 1 ? "una puerta de tambor" : `${n} puertas de tambor`;
